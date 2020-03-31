@@ -1,0 +1,62 @@
+[;; User
+ {:db/ident :user/username
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "User's name"}
+ 
+ {:db/ident :user/password
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "User's name"}
+ 
+ {:db/ident :user/balance
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "User's balance"}
+ 
+;; Airport
+ {:db/ident :airport/icao
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "An airport ICAO"}
+
+ ;; Aircraft
+ {:db/ident :aircraft/type
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "An aircraft type"}
+
+ ;; Flight
+ {:db/ident :flight/created-at
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight created at"}
+ 
+ {:db/ident :flight/status
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight status"}
+ 
+ {:db/ident :flight/from
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight origin"}
+ 
+ {:db/ident :flight/to
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight origin"}
+ 
+ {:db/ident :flight/aircraft
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight aircraft"}
+ 
+ {:db/ident :flight/user
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight user"}
+ ]
