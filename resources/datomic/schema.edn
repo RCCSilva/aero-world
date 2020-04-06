@@ -4,16 +4,77 @@
   :db/cardinality :db.cardinality/one
   :db/unique :db.unique/identity
   :db/doc "User's name"}
- 
+
  {:db/ident :user/password
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "User's name"}
- 
+
  {:db/ident :user/balance
   :db/valueType :db.type/float
   :db/cardinality :db.cardinality/one
   :db/doc "User's balance"}
+ 
+ {:db/ident :user/airport
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "User's current airport"}
+ 
+ {:db/ident :user/aircraft
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/value
+  :db/doc "User's current aircraft"}
+
+;; Product
+ 
+ {:db/ident :product/name
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "A product's name"}
+ 
+ {:db/ident :product/value
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "A product's value"}
+
+;; Order
+ 
+ {:db/ident :order/from
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order airport origin"}
+ 
+ {:db/ident :order/to
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order airport destiny"}
+ 
+ {:db/ident :order/product
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order product"}
+ 
+ {:db/ident :order/quantity
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order value"}
+ 
+ {:db/ident :order/value
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order value"}
+
+ {:db/ident :order/status
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/doc "An order status"}
+ 
+ {:db/ident :order/finish-flight
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "The flight which finished the order"}
  
 ;; Airport
  {:db/ident :airport/icao
@@ -21,42 +82,66 @@
   :db/cardinality :db.cardinality/one
   :db/unique :db.unique/identity
   :db/doc "An airport ICAO"}
+ 
+ {:db/ident :airport/available-for-orders
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many 
+  :db/doc "An airport ICAO"}
 
  ;; Aircraft
- {:db/ident :aircraft/type
+ {:db/ident :aircraft/register
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/unique :db.unique/identity
+  :db/doc "An aircraft ID"}
+
+ {:db/ident :aircraft/type
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
   :db/doc "An aircraft type"}
+
+ {:db/ident :aircraft/airport
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "An aircraft current airport"}
+ 
+ {:db/ident :aircraft/payload
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/doc "An aircraft payload"}
+ 
+ {:db/ident :aircraft/status
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/doc "An aircraft payload"}
 
  ;; Flight
  {:db/ident :flight/created-at
   :db/valueType :db.type/instant
   :db/cardinality :db.cardinality/one
   :db/doc "A flight created at"}
- 
+
  {:db/ident :flight/status
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/one
   :db/doc "A flight status"}
- 
+
  {:db/ident :flight/from
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
   :db/doc "A flight origin"}
- 
+
  {:db/ident :flight/to
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
   :db/doc "A flight origin"}
- 
+
  {:db/ident :flight/aircraft
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
   :db/doc "A flight aircraft"}
- 
+
  {:db/ident :flight/user
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
-  :db/doc "A flight user"}
- ]
+  :db/doc "A flight user"}]

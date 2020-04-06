@@ -1,0 +1,17 @@
+[{:order/from {:airport/icao "SBGR"}
+  :order/to {:airport/icao "SBPA"}
+  :order/status :order.status/available
+  :order/product :order.product/apple
+  :order/value 10.0}
+ 
+ {:order/from {:airport/icao "SBGR"}
+  :order/to {:airport/icao "SBPA"}
+  :order/status :order.status/available
+  :order/product :order.product/cars
+  :order/value 100.0}
+
+ {:order/from {:airport/icao "SBPA"}
+  :order/to {:airport/icao "SBGR"}
+  :order/status :order.status/available
+  :order/product :order.product/banana
+  :order/value 10.0}]

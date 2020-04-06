@@ -1,23 +1,20 @@
-(ns aero-world-clojure.auth
+(ns aero-world.auth
   (:require
    [buddy.sign.jwt :as jwt]
-   [buddy.core.keys :as ks]
    [clj-time.core :as t]
-   [clojure.java.io :as io]
    [buddy.hashers :as hs]
-   [aero-world-clojure.db.core :as db]))
+   [aero-world.db.core :as db]))
 
 (def secret "my-secret")
 
-
 (defn convert-datomic-entity-to-map [entity]
-  (into {} entity))
+  (conj {:db/id (-> entity :db/id)} (into {} entity)))
 
 (defn parse-session-token [token]
   (try
     {:user-entity (-> (jwt/unsign token secret) 
                       :user 
-                      :user/username 
+                      :user/username
                       db/find-user-by-username 
                       convert-datomic-entity-to-map
                       (dissoc :user/password))
@@ -36,7 +33,7 @@
         unauthed [false {:message "Invalid username or password"}]]
     (if user
       (if (hs/check (:password credentials) (:user/password user))
-        [true {:user ((into {} user) :user/username)}]
+        [true {:user (dissoc (convert-datomic-entity-to-map user) :user/password)}]
         unauthed)
       unauthed)))
 

@@ -1,0 +1,7 @@
+[{:airport/icao "SBGR"
+  :airport/available-for-orders {:airport/icao "SBSJ"}}
+ 
+ {:airport/icao "SBPA"
+  :airport/available-for-orders {:airport/icao "SBSJ"}}
+ 
+ {:airport/icao "SBSJ"}]

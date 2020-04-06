@@ -1,6 +1,7 @@
-# aero-world-clojure
+# Aero World
 
-FIXME
+A persistent world and with economy focus for flight simulators. Currently, Aero World is in a super early release and
+should not be "seriously" used.
 
 ## Prerequisites
 
@@ -14,6 +15,10 @@ To start a web server for the application, run:
 
     lein ring server
 
+### REPL
+
+    (def server (-dev-main))
+
 ## License
 
-Copyright © 2020 FIXME
+Copyright Rafael Coelho © 2020

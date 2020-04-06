@@ -1,0 +1,4 @@
+[{:aircraft/register "PT-RME" 
+  :aircraft/type "C172" 
+  :aircraft/airport {:airport/icao "SBGR"} 
+  :aircraft/status :aircraft.status/available}]

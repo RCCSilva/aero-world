@@ -1,0 +1,5 @@
+[{:product/name :product.name/banana
+  :product/value 10.0}
+ 
+ {:product/name :product.name/passanger
+  :product/value 30.0}]
