@@ -1,7 +1,7 @@
 (ns aero-world.core-test
   (:use aero-world.db.core)
   (:require [clojure.test :refer :all]
-            [aero-world-clojure.core :refer :all]
+            [aero-world.core :refer :all]
             [datomic.api :as d]))
 
 (deftest create-flight-test
