@@ -1,4 +1,4 @@
-(ns aero-world-clojure.db.preds
+(ns aero-world.db.preds
   (:require [clojure.string :as s]))
 
 (defn icao? [icao]

@@ -1,5 +1,5 @@
-(ns aero-world-clojure.core-test
-  (:use aero-world-clojure.db.core)
+(ns aero-world.core-test
+  (:use aero-world.db.core)
   (:require [clojure.test :refer :all]
             [aero-world-clojure.core :refer :all]
             [datomic.api :as d]))

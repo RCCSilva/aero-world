@@ -1,6 +1,6 @@
-(ns aero-world-clojure.core
+(ns aero-world.core
    (:require [ring.adapter.jetty :refer [run-jetty]]
-             [aero-world-clojure.handler :refer [app]]
+             [aero-world.handler :refer [app]]
              [environ.core :refer [env]]
              [ring.middleware.reload :refer [wrap-reload]]))
  
