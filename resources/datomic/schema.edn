@@ -57,7 +57,7 @@
   :db/doc "An order product"}
  
  {:db/ident :order/quantity
-  :db/valueType :db.type/float
+  :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
   :db/doc "An order value"}
  

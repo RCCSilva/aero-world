@@ -4,16 +4,6 @@
             [aero-world.service :refer :all]
             [datomic.api :as d]))
 
-
-[[:db/add 1 :user/airport 2]
- [:db/add 1 :user/balance 20]
- [:db/add 4 :aircraft/airport 2]
- [:db/add 3 :flight/status :flight.status/finished]]
-[[:db/add 1 :user/balance 10]
- [:db/add 1 :user/airport 2]
- [:db/add 4 :aircraft/airport 2]
- [:db/add 3 :flight/status :flight.status/finished]]
-
 (deftest flight-queries
   (testing "Finish Flight - "
     (is (=
@@ -108,7 +98,8 @@
            (update-user-balance-query
             {:user {:db/id 1 :user/balance 0}
              :orders '({:order/value 10} {:order/value 30})}))))
-  (testing "Create Global Offer"
+  
+  (testing "Create Offer"
     (is (=
          [{:order/from 1
            :order/to 2
@@ -119,4 +110,19 @@
          (create-order-query {:airport-from {:db/id 1}
                               :airport-to {:db/id 2}
                               :product {:db/id 3 :product/value 10}
-                              :quantity 10})))))
+                              :quantity 10}))))
+  
+  (testing "Create Offer - With Random"
+    (let [airport {:db/id 1
+                   :airport/available-for-orders #{{:db/id 2}}}
+          product {:db/id 3 :product/value 10}
+          data (first (create-order-random-query {:airport airport
+                                                  :product product}))
+          quantity (data :order/quantity)] 
+      (is (and
+           (= (data :order/from) 1)
+           (= (data :order/to) 2)
+           (= (data :order/product) 3)
+           (contains? (set (range 1 11)) quantity)
+           (= (data :order/value) (* quantity (product :product/value)))
+           (= (data :order/status) :order.status/available))))))

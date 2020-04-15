@@ -11,11 +11,13 @@
           schema (load-file "resources/datomic/schema.edn")
           airport (load-file "resources/datomic/airport.edn")
           order (load-file "resources/datomic/order.edn")
-          aircraft (load-file "resources/datomic/aircraft.edn")]
+          aircraft (load-file "resources/datomic/aircraft.edn")
+          product (load-file "resources/datomic/product.edn")]
       (d/transact conn schema)
       (d/transact conn airport)
       (d/transact conn order)
       (d/transact conn aircraft)
+      (d/transact conn product)
       conn)))
 
 (def conn (create-empty-in-memory-db))
@@ -128,6 +130,13 @@
            (d/db conn))
       (touch conn)))
 
+(defn find-all-products []
+  (-> (d/q '[:find ?p
+             :where
+             [?p :product/name]]
+           (d/db conn))
+      (touch conn)))
+
 (defn find-all-aircrafts []
   (-> (d/q '[:find ?aircraft ?type
              :where
@@ -166,19 +175,16 @@
 (defn get-order-by-from [from-icao status]
   (if (or (nil? from-icao) (nil? status))
     nil
-    (d/q '[:find ?o ?from-icao ?to-icao ?product ?value ?status
-           :in $ ?from-icao ?status
-           :where
-           [?from :airport/icao ?from-icao]
-           [?o :order/from ?from]
-           [?o :order/status ?status]
-           [?o :order/to ?to]
-           [?to :airport/icao ?to-icao]
-           [?o :order/product ?product]
-           [?o :order/value ?value]]
-         (d/db conn)
-         from-icao
-         status)))
+    (-> (d/q '[:find ?o
+               :in $ ?from-icao ?status
+               :where
+               [?from :airport/icao ?from-icao]
+               [?o :order/from ?from]
+               [?o :order/status ?status]]
+             (d/db conn)
+             from-icao
+             status)
+        (touch conn))))
 
 (defn get-order-sums-by-flight [flight]
   (d/q '[:find (sum ?value) .

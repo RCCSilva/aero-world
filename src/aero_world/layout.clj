@@ -66,19 +66,14 @@
     ])
 
 (defn create-available-orders-select-row [order]
-  (let [order-id (order 0)
-        from-icao (order 1)
-        to-icao (order 2)
-        product (order 3)
-        value (order 4)]
-    [:div.my-1.px-2.py-2.bg-blue-500.rounded
-     [:div.flex.flex-row.justify-around.items-center
-      [:span.text-white.font-bold from-icao]
-      [:span.text-white.font-bold to-icao]
-      [:span.text-white.font-bold product]
-      [:span.text-white.font-bold value]
-      [:a {:href (str "/order/" order-id "/assign")}
-       [:button.px-2..py-1.bg-teal-700.hover:bg-teal-800.rounded.text-white.font-bold "Assign"]]]]))
+  [:div.my-1.px-2.py-2.bg-blue-500.rounded
+   [:div.flex.flex-row.justify-around.items-center
+    [:span.text-white.font-bold (-> order :order/from :airport/icao)]
+    [:span.text-white.font-bold (-> order :order/to :airport/icao)]
+    [:span.text-white.font-bold (-> order :order/product :product/name)]
+    [:span.text-white.font-bold (-> order :order/value)]
+    [:a {:href (str "/order/" (-> order :db/id) "/assign")}
+     [:button.px-2..py-1.bg-teal-700.hover:bg-teal-800.rounded.text-white.font-bold "Assign"]]]])
 
 (defn create-payload-select-row [payload]
   [:div.px-2.py-2.bg-blue-500.rounded
@@ -207,6 +202,9 @@
       (map create-payload-select-row (-> current-user :user/aircraft :aircraft/payload))]
      [:div.mt-4.pr-16.mx-auto {:class "w-1/2"}
       [:h2.text-4xl.font-bold "Available Orders"]
+      [:a {:href (str "/airports/" (-> current-user :user/airport :airport/icao) "/create-order")}
+       [:button.px-8.py-4.bg-blue-500.hover:bg-blue-600.rounded.border.font-bold.text-white 
+        "Create Random Order"] ]
       (map create-available-orders-select-row available-orders)]]]))
 
 (defn login []

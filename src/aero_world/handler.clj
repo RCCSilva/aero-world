@@ -151,6 +151,17 @@
       (db/transact! query)))
   (response/found "/"))
 
+(defn create-random-order! [request]
+  (let [icao (-> request :route-params :icao)
+        airport (-> icao db/find-airport-by-icao db/touch-by-entity-id)
+        product (-> (db/find-all-products) vec service/get-random)
+        query (service/create-order-random-query {:airport airport
+                                                  :product product})
+        ]
+    (println query)
+    (db/transact! query))
+  (response/found "/"))
+
 (defroutes app-routes
   (GET "/" [] home-page)
   (GET "/register" [] register-page)
@@ -162,6 +173,7 @@
   (GET "/logs" [] logs-page)
   (GET "/airports" [] airports-page)
   (GET "/airports/:icao" [] airports-icao-page)
+  (GET "/airports/:icao/create-order" [] create-random-order!)
   (GET "/flight/:id/start" [id] (start-flight! (Long. id)))
   (GET "/flight/:id/finish" [id] (finish-flight! (Long. id)))
   (GET "/aircraft/:id/rent" [] rent-aircraft!)

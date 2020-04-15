@@ -2,8 +2,11 @@
 
 ;; Utils
 
-(defn get-random-from-set [set]
-  (set (+ 1 (rand-int (count set)))))
+(defn get-random-from-set [x]
+  ((vec (map (fn [x] x) x)) (rand-int (count x))))
+
+(defn get-random [x]
+  (x (rand-int (count x))))
 
 ;; Aircraft 
 
@@ -49,7 +52,7 @@
     :order/status :order.status/available}])
 
 (defn create-order-random-query [{:keys [airport product]}]
-  (let [airport-to (get-random-from-set (-> airport :available-for-orders))
+  (let [airport-to (get-random-from-set (-> airport :airport/available-for-orders))
         quantity (+ (rand-int 10))]
     (create-order-query {:airport-from airport
                          :airport-to airport-to
