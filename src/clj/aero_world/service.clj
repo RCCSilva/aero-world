@@ -52,7 +52,7 @@
     :order/status :order.status/available}])
 
 (defn create-order-random-query [{:keys [airport product]}]
-  (let [airport-to (get-random-from-set (-> airport :airport/available-for-orders))
+  (let [airport-to (get-random-from-set (-> airport :airport/available-orders))
         quantity (+ (rand-int 10))]
     (create-order-query {:airport-from airport
                          :airport-to airport-to

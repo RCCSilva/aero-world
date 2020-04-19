@@ -114,7 +114,7 @@
   
   (testing "Create Offer - With Random"
     (let [airport {:db/id 1
-                   :airport/available-for-orders #{{:db/id 2}}}
+                   :airport/available-orders #{{:db/id 2}}}
           product {:db/id 3 :product/value 10}
           data (first (create-order-random-query {:airport airport
                                                   :product product}))

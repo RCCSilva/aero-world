@@ -4,6 +4,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.http-response :as response]
             [aero-world.layout :as layout]
+            [aero-world.layout.core :as layout-core]
             [aero-world.db.core :as db]
             [aero-world.auth :as auth]
             [aero-world.service :as service]))
@@ -15,23 +16,23 @@
   (let [[ok? res] (auth/create-auth-token
                    (:params req))]
     (if ok?
-      (-> (response/found "/") (set-cookie :session-token {:value res}))
+      (-> (response/found "/dashboard") (set-cookie :session-token {:value res}))
       (response/found "/login"))))
 
-(defn home-page [request]
+(defn dashboard-page [request]
   (let [current-user (request :user-entity)]
     (if (request :is-authenticated)
-      (layout/dashboard {:flights (db/find-all-flights)
-                         :aircrafts (db/find-all-available-aircrafts)
-                         :current-user current-user
-                         :available-orders (db/get-order-by-from (-> current-user :user/airport :airport/icao) :order.status/available)
-                         :current-flight (db/get-current-user-flight (-> current-user :db/id))})
+      (layout-core/dashboard-page {:flights (db/find-all-flights)
+                                   :aircrafts (db/find-all-available-aircrafts)
+                                   :current-user current-user
+                                   :available-orders (db/get-order-by-from (-> current-user :user/airport :airport/icao) :order.status/available)
+                                   :current-flight (db/get-current-user-flight (-> current-user :db/id))})
       (response/found "/login"))))
 
 (defn login-page [request]
   (if (request :is-authenticated)
-    (response/found "/")
-    (layout/login)))
+    (response/found "/dashboard")
+    (layout-core/login-page)))
 
 (defn logs-page [request]
   (let [current-user (request :user-entity)
@@ -42,13 +43,13 @@
                                      :flight/value
                                      (db/get-order-sums-by-flight (-> % :flight.db/id))))
                                   orders-history)]
-    (layout/logs {:current-user current-user
+    (layout-core/logs-page {:current-user current-user
                   :history-of-flights (sort-by :flight/created-at orders-history-value)})))
 
 (defn airports-page [request]
   (let [current-user (request :user-entity)] 
-   (layout/airports {:current-user current-user 
-                     :airports (db/find-all-airports)})))
+   (layout-core/airports-page {:current-user current-user
+                               :airports (db/find-all-airports)})))
 
 (defn airports-icao-page [request]
   (let [current-user (request :user-entity)
@@ -56,9 +57,9 @@
         available-aircrafts (db/find-aircrafts-by-icao icao)
         available-orders (db/find-orders-by-icao icao)]
     
-    (layout/airports-single-page {:current-user current-user
-                                  :available-aircrafts available-aircrafts
-                                  :available-orders available-orders})))
+    (layout-core/sinle-airport-page {:current-user current-user
+                                      :available-aircrafts available-aircrafts
+                                      :available-orders available-orders})))
 
 (defn login-user [request]
   (create-auth-token request))
@@ -68,8 +69,8 @@
 
 (defn register-page [request]
   (if (request :is-authenticated)
-    (response/found "/")
-    (layout/register)))
+    (response/found "/dashboard")
+    (layout-core/register-page)))
 
 (defn register-user [request]
   (let [params (request :params)]
@@ -96,7 +97,7 @@
                                            :user current-user-db-id})]
     (when (and (db/find-airport-by-icao flight-to) (not (nil? aircraft-db-id)))
       (db/transact! query))
-    (response/found "/")))
+    (response/found "/dashboard")))
 
 (defn finish-flight! [flight-id]
   (let  [flight (db/touch-by-entity-id flight-id)
@@ -109,11 +110,11 @@
                                              :aircraft aircraft})]
     (db/transact! query)
     )
-  (response/found "/"))
+  (response/found "/dashboard"))
 
   (defn start-flight! [flight-id]
     (db/update-flight {:flight-entity-id flight-id :flight-status :flight.status/flying})
-    (response/found "/"))
+    (response/found "/dashboard"))
 
 (defn rent-aircraft! [request]
   (let [user (-> request :user-entity :db/id Long. db/touch-by-entity-id)
@@ -121,7 +122,7 @@
         query (service/rent-aircraft-query {:aircraft aircraft :user user})]
     (when (= (-> user :user/airport) (-> aircraft :aircraft/airport))
       (db/transact! query)))
-    (response/found "/"))
+    (response/found "/dashboard"))
 
 (defn leave-aircraft! [request]
   (let [user (-> request :user-entity)
@@ -129,7 +130,7 @@
         query (service/leave-aircraft-query {:user user
                                               :aircraft aircraft})]
     (db/transact! query))
-  (response/found "/"))
+  (response/found "/dashboard"))
 
 (defn assign-order! [request]
   (let [order (-> request :route-params :id Long. db/touch-by-entity-id)
@@ -137,7 +138,7 @@
         query (service/assign-order-query {:aircraft aircraft 
                                          :order order})]
     (db/transact! query))
-  (response/found "/"))
+  (response/found "/dashboard"))
 
 (defn deliver-order! [request]
   (let [current-user (-> request :user-entity :db/id db/touch-by-entity-id)
@@ -149,7 +150,7 @@
                                           :user current-user})]
     (when (= (-> aircraft :aircraft/airport) (-> order :order/to))
       (db/transact! query)))
-  (response/found "/"))
+  (response/found "/dashboard"))
 
 (defn create-random-order! [request]
   (let [icao (-> request :route-params :icao)
@@ -160,10 +161,14 @@
         ]
     (println query)
     (db/transact! query))
-  (response/found "/"))
+  (response/found "/dashboard"))
+
+(defn home-page [request]
+  (layout-core/home-page))
 
 (defroutes app-routes
   (GET "/" [] home-page)
+  (GET "/dashboard" [] dashboard-page)
   (GET "/register" [] register-page)
   (POST "/register" [] register-user)
   (GET "/login" [] login-page)

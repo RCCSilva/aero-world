@@ -15,9 +15,10 @@
                  [buddy "2.0.0"]
                  [org.clojure/clojurescript "1.9.946" :scope "provided"]
                  [org.clojure/tools.reader "1.2.2"]
-                 [reagent "0.5.1"]
+                 [reagent "0.10.0"]
                  [cljs-ajax "0.5.2"]
-                 [ring/ring-json "0.5.0"]]
+                 [ring/ring-json "0.5.0"]
+                 [hiccup "1.0.5"]]
 
   :plugins [[lein-ring "0.12.5"]
             [lein-cljsbuild "1.1.8"]]

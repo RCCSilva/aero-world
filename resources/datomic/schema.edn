@@ -83,7 +83,7 @@
   :db/unique :db.unique/identity
   :db/doc "An airport ICAO"}
  
- {:db/ident :airport/available-for-orders
+ {:db/ident :airport/available-orders
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many 
   :db/doc "An airport ICAO"}
