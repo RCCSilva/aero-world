@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/aero-world-standalone.jar clojure.main -m aero-world.core
+web: java $JVM_OPTS -cp target/uberjar/aero-world-standalone.jar clojure.main -m aero-world.core

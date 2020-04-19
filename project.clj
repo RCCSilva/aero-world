@@ -44,12 +44,10 @@
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.2"]]
-         :main aero-world.core/-dev-main}}
+         :main aero-world.core/-dev-main}
 
   :uberjar {:omit-source true
             :aot :all
-            :uberjar-name "aero-world-standalone.jar"
-            :source-paths ["env/prod/clj"]
-            :resource-paths ["env/prod/resources"]}
+            :uberjar-name "aero-world-standalone.jar"}
 
-  :repl-options {:init-ns aero-world.core})
+  :repl-options {:init-ns aero-world.core}})
