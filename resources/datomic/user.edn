@@ -1,0 +1,14 @@
+[{:user/username "Rafael"
+  :user/password "bcrypt+sha512$13fecf9401744b5e1889ea52f6ec959a$12$220f6f4974975dead59ca0f2b108c509da72ddcab1892e6e"
+  :user/balance 0.0
+  :user/airport {:airport/icao "SBGR"}}
+ 
+ {:user/username "Luis"
+  :user/password "bcrypt+sha512$13fecf9401744b5e1889ea52f6ec959a$12$220f6f4974975dead59ca0f2b108c509da72ddcab1892e6e"
+  :user/balance 0.0
+  :user/airport {:airport/icao "SBGR"}}
+ 
+ {:user/username "Carol"
+  :user/password "bcrypt+sha512$13fecf9401744b5e1889ea52f6ec959a$12$220f6f4974975dead59ca0f2b108c509da72ddcab1892e6e"
+  :user/balance 0.0
+  :user/airport {:airport/icao "SBKP"}}]

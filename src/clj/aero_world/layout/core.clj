@@ -7,7 +7,8 @@
    [aero-world.layout.views.dashboard :refer [dashboard]]
    [aero-world.layout.views.airports :refer [airports]]
    [aero-world.layout.views.single-airport :refer [single-airport]]
-   [aero-world.layout.views.logs :refer [logs]]))
+   [aero-world.layout.views.logs :refer [logs]]
+   [aero-world.layout.views.user-aircrafts :refer [user-aircrafts]]))
 
 (defn include-css [href]
   [:link {:type "text/css", :href href, :rel "stylesheet"}])
@@ -48,3 +49,6 @@
 
 (defn logs-page [params]
   (base-page logs params))
+
+(defn user-aircrafts-page [params]
+  (base-page user-aircrafts params))

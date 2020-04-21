@@ -3,7 +3,6 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.http-response :as response]
-            [aero-world.layout :as layout]
             [aero-world.layout.core :as layout-core]
             [aero-world.db.core :as db]
             [aero-world.auth :as auth]
@@ -20,13 +19,14 @@
       (response/found "/login"))))
 
 (defn dashboard-page [request]
-  (let [current-user (request :user-entity)]
+  (let [current-user (request :user-entity)
+        user-db-id (-> current-user :db/id)]
     (if (request :is-authenticated)
       (layout-core/dashboard-page {:flights (db/find-all-flights)
-                                   :aircrafts (db/find-all-available-aircrafts)
+                                   :aircrafts (db/find-aircrafts-available-for-user user-db-id)
                                    :current-user current-user
                                    :available-orders (db/get-order-by-from (-> current-user :user/airport :airport/icao) :order.status/available)
-                                   :current-flight (db/get-current-user-flight (-> current-user :db/id))})
+                                   :current-flight (db/get-current-user-flight user-db-id)})
       (response/found "/login"))))
 
 (defn login-page [request]
@@ -101,15 +101,10 @@
 
 (defn finish-flight! [flight-id]
   (let  [flight (db/touch-by-entity-id flight-id)
-         aircraft (-> flight :flight/aircraft)
-         airport (-> flight :flight/to)
-         user (-> flight :flight/user)
-         query (service/finish-flight-query {:user user 
-                                             :airport airport 
-                                             :flight flight
-                                             :aircraft aircraft})]
-    (db/transact! query)
-    )
+         closed-at (java.util.Date.)
+         query (service/finish-flight-query {:flight flight
+                                             :closed-at closed-at})]
+    (db/transact! query))
   (response/found "/dashboard"))
 
   (defn start-flight! [flight-id]
@@ -145,9 +140,9 @@
         order-db-id (-> request :route-params :id Long.)
         aircraft (-> current-user :user/aircraft)
         order (db/touch-by-entity-id order-db-id)
-        query (service/deliver-order-query {:aircraft aircraft
-                                          :order order
-                                          :user current-user})]
+        query (service/deliver-one-order-query {:aircraft aircraft
+                                                :order order
+                                                :user current-user})]
     (when (= (-> aircraft :aircraft/airport) (-> order :order/to))
       (db/transact! query)))
   (response/found "/dashboard"))
@@ -157,11 +152,28 @@
         airport (-> icao db/find-airport-by-icao db/touch-by-entity-id)
         product (-> (db/find-all-products) vec service/get-random)
         query (service/create-order-random-query {:airport airport
-                                                  :product product})
-        ]
-    (println query)
+                                                  :product product})]
+    
     (db/transact! query))
   (response/found "/dashboard"))
+
+(defn my-aircrafts [request]
+  (let [current-user (request :user-entity)
+        user-aircrafts (db/find-aircrafts-by-owner (-> current-user :db/id))]
+    (layout-core/user-aircrafts-page {:current-user current-user
+                                      :aircrafts user-aircrafts})))
+
+(defn make-aircraft-available-for-rent! [request]
+  (let [aircraft (-> request :route-params :id Long. db/touch-by-entity-id)
+        query (service/make-aircraft-available-for-rent-query aircraft)]
+    (db/transact! query))
+  (response/found "/my-aircrafts"))
+
+(defn make-aircraft-unavailable-for-rent! [request]
+  (let [aircraft (-> request :route-params :id Long. db/touch-by-entity-id)
+        query (service/make-aircraft-unavailable-for-rent-query aircraft)]
+    (db/transact! query))
+  (response/found "/my-aircrafts"))
 
 (defn home-page [request]
   (layout-core/home-page))
@@ -183,8 +195,11 @@
   (GET "/flight/:id/finish" [id] (finish-flight! (Long. id)))
   (GET "/aircraft/:id/rent" [] rent-aircraft!)
   (GET "/aircraft/:id/leave" [] leave-aircraft!)
+  (GET "/aircraft/:id/available-for-rent" [] make-aircraft-available-for-rent!)
+  (GET "/aircraft/:id/unavailable-for-rent" [] make-aircraft-unavailable-for-rent!)
   (GET "/order/:id/assign" [] assign-order!)
   (GET "/order/:id/deliver" [] deliver-order!)
+  (GET "/my-aircrafts" [] my-aircrafts)
   (route/not-found "Not Found"))
 
 (def app

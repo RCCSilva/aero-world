@@ -10,11 +10,13 @@
   [:div.px-16.py-2.bg-white.shadow-lg
    [:div.flex.flex-row.items-center.justify-between
     [:div.flex.flex-row.items-center
-     [:a {:href "/"}
+     [:a {:href "/dashboard"}
       [:span.text-2xl.font-bold.text-gray-800 "Aero World"]]
      [:div.ml-4
       [:a {:href "/airports"}
        [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "Airports"]]
+      [:a {:href "/my-aircrafts"}
+       [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "My Aircrafts"]]
       [:a {:href "/logs"}
        [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "Logs"]]]]
     [:div

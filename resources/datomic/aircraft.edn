@@ -1,4 +1,31 @@
 [{:aircraft/register "PT-RME" 
   :aircraft/type "C172" 
   :aircraft/airport {:airport/icao "SBGR"} 
-  :aircraft/status :aircraft.status/available}]
+  :aircraft/status :aircraft.status/available
+  :aircraft/owner {:user/username "Rafael"}
+  :aircraft/rent-price-per-hour 100.0
+  :aircraft/available-for-rent? false}
+ 
+ {:aircraft/register "PT-RRR"
+  :aircraft/type "C172"
+  :aircraft/airport {:airport/icao "SBGR"}
+  :aircraft/status :aircraft.status/available
+  :aircraft/owner {:user/username "Luis"}
+  :aircraft/rent-price-per-hour 100.0
+  :aircraft/available-for-rent? true}
+ 
+ {:aircraft/register "PT-GGG"
+  :aircraft/type "C172"
+  :aircraft/airport {:airport/icao "SBGR"}
+  :aircraft/status :aircraft.status/available
+  :aircraft/owner {:user/username "Luis"}
+  :aircraft/rent-price-per-hour 100.0
+  :aircraft/available-for-rent? false}
+ 
+ {:aircraft/register "PT-OME"
+  :aircraft/type "C172"
+  :aircraft/airport {:airport/icao "SBGR"}
+  :aircraft/status :aircraft.status/available
+  :aircraft/owner {:user/username "Luis"}
+  :aircraft/rent-price-per-hour 100.0
+  :aircraft/available-for-rent? false}]

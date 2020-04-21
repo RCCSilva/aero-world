@@ -99,7 +99,22 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "An aircraft type"}
-
+ 
+ {:db/ident :aircraft/owner
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one
+  :db/doc "An aircraft's owner"}
+ 
+ {:db/ident :aircraft/available-for-rent?
+  :db/valueType :db.type/boolean
+  :db/cardinality :db.cardinality/one
+  :db/doc "Is the aircraft available for rent?"}
+ 
+ {:db/ident :aircraft/rent-price-per-hour
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "The price paid for each hour flown in the airplane"}
+ 
  {:db/ident :aircraft/airport
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
@@ -119,7 +134,12 @@
  {:db/ident :flight/created-at
   :db/valueType :db.type/instant
   :db/cardinality :db.cardinality/one
-  :db/doc "A flight created at"}
+  :db/doc "A flight created at time"}
+ 
+ {:db/ident :flight/closed-at
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one
+  :db/doc "A flight closed at time"}
 
  {:db/ident :flight/status
   :db/valueType :db.type/keyword
