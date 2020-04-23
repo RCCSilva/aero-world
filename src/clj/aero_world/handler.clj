@@ -1,12 +1,13 @@
 (ns aero-world.handler
-  (:require [compojure.core :refer [defroutes GET POST]]
+  (:require [compojure.core :refer [defroutes GET POST ANY]]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.http-response :as response]
             [aero-world.layout.core :as layout-core]
             [aero-world.db.core :as db]
             [aero-world.auth :as auth]
-            [aero-world.service :as service]))
+            [aero-world.service :as service]
+            [aero-world.middleware :refer [wrap-auth]]))
 
 (defn set-cookie [response cookie-name value]
   (-> response (assoc-in [:cookies cookie-name] value)))
@@ -21,13 +22,11 @@
 (defn dashboard-page [request]
   (let [current-user (request :user-entity)
         user-db-id (-> current-user :db/id)]
-    (if (request :is-authenticated)
-      (layout-core/dashboard-page {:flights (db/find-all-flights)
-                                   :aircrafts (db/find-aircrafts-available-for-user user-db-id)
-                                   :current-user current-user
-                                   :available-orders (db/get-order-by-from (-> current-user :user/airport :airport/icao) :order.status/available)
-                                   :current-flight (db/get-current-user-flight user-db-id)})
-      (response/found "/login"))))
+    (layout-core/dashboard-page {:flights (db/find-all-flights)
+                                 :aircrafts (db/find-aircrafts-available-for-user user-db-id)
+                                 :current-user current-user
+                                 :available-orders (db/get-order-by-from (-> current-user :user/airport :airport/icao) :order.status/available)
+                                 :current-flight (db/get-current-user-flight user-db-id)})))
 
 (defn login-page [request]
   (if (request :is-authenticated)
@@ -92,9 +91,10 @@
         aircraft-airport (-> aircraft :aircraft/airport :airport/icao)
         flight-to (-> request :params :to)  
         query (service/create-flight-query {:from aircraft-airport
-                                           :to flight-to
-                                           :aircraft aircraft-db-id
-                                           :user current-user-db-id})]
+                                            :to flight-to
+                                            :aircraft aircraft-db-id
+                                            :user current-user-db-id
+                                            :created-at (java.util.Date.)})]
     (when (and (db/find-airport-by-icao flight-to) (not (nil? aircraft-db-id)))
       (db/transact! query))
     (response/found "/dashboard")))
@@ -107,9 +107,9 @@
     (db/transact! query))
   (response/found "/dashboard"))
 
-  (defn start-flight! [flight-id]
-    (db/update-flight {:flight-entity-id flight-id :flight-status :flight.status/flying})
-    (response/found "/dashboard"))
+(defn start-flight! [flight-id]
+  (db/update-flight {:flight-entity-id flight-id :flight-status :flight.status/flying})
+  (response/found "/dashboard"))
 
 (defn rent-aircraft! [request]
   (let [user (-> request :user-entity :db/id Long. db/touch-by-entity-id)
@@ -175,16 +175,32 @@
     (db/transact! query))
   (response/found "/my-aircrafts"))
 
+(defn buy-aircrafts-page [request]
+  (let [current-user (request :user-entity)
+        aircraft-models (db/find-all-aircraft-models)]
+    (layout-core/buy-aircrafts-page {:current-user current-user
+                                      :aircraft-models aircraft-models})))
+
+(defn buy-aircrafts! [request]
+  (let [current-user (request :user-entity)
+        aircraft-model (-> request :params :type db/find-all-aircraft-model-by-type)
+        register (-> request :params :register)
+        aircraft (-> register db/find-aircraft-by-register)
+        query (service/buy-aircraft-query {:user current-user
+                                           :register register
+                                           :aircraft-model aircraft-model})]
+    (if (nil? aircraft)
+      (do 
+        (db/transact! query)
+        (response/found "/my-aircrafts"))
+      (response/found "/buy-aircrafts"))))
+
+
 (defn home-page [request]
   (layout-core/home-page))
 
-(defroutes app-routes
-  (GET "/" [] home-page)
+(defroutes app-routes*
   (GET "/dashboard" [] dashboard-page)
-  (GET "/register" [] register-page)
-  (POST "/register" [] register-user)
-  (GET "/login" [] login-page)
-  (POST "/login" [] login-user)
   (GET "/logout" [] logout-user)
   (POST "/flight" [] create-flight!)
   (GET "/logs" [] logs-page)
@@ -200,9 +216,26 @@
   (GET "/order/:id/assign" [] assign-order!)
   (GET "/order/:id/deliver" [] deliver-order!)
   (GET "/my-aircrafts" [] my-aircrafts)
+  (GET "/buy-aircrafts" [] buy-aircrafts-page)
+  (POST "/buy-aircrafts" [] buy-aircrafts!)
   (route/not-found "Not Found"))
 
-(def app
-  (-> app-routes
-      auth/authentication-middleware
-      (wrap-defaults  site-defaults)))
+(defroutes public-routes
+  (GET "/" [] home-page)
+  (GET "/login" [] login-page)
+  (POST "/login" [] login-user)
+  (GET "/register" [] register-page)
+  (POST "/register" [] register-user))
+
+(def app-routes
+  (-> app-routes*
+      wrap-auth))
+
+(defroutes main-routes*
+  (ANY "*" [] public-routes)
+  (ANY "*" [] app-routes))
+
+(def main-routes
+    (-> main-routes* 
+        auth/authentication-middleware
+        (wrap-defaults  site-defaults)))

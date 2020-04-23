@@ -17,6 +17,8 @@
        [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "Airports"]]
       [:a {:href "/my-aircrafts"}
        [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "My Aircrafts"]]
+      [:a {:href "/buy-aircrafts"}
+       [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "Buy"]]
       [:a {:href "/logs"}
        [:span.mx-2.text-xl.hover:font-bold.text-gray-800.cursor-pointer "Logs"]]]]
     [:div

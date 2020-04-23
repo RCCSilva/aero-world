@@ -1,0 +1,4 @@
+[
+ {:aircraft-model/type "C172"
+  :aircraft-model/price 1000.0}
+ ]
