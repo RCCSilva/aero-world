@@ -9,6 +9,7 @@
     (d/create-database uri)
     (let [conn (d/connect uri)
           schema (load-file "resources/datomic/schema.edn")
+          user (load-file "resources/datomic/user.edn")
           airport (load-file "resources/datomic/airport.edn")
           order (load-file "resources/datomic/order.edn")
           aircraft (load-file "resources/datomic/aircraft.edn")
@@ -18,6 +19,7 @@
       (d/transact conn order)
       (d/transact conn aircraft)
       (d/transact conn product)
+      (d/transact conn user)
       conn)))
 
 (def conn (create-empty-in-memory-db))
@@ -75,6 +77,16 @@
             [?a :aircraft/type ?type]]
           (d/db conn)
           type))))
+
+(defn find-aircrafts-by-owner [owner-db-id]
+  (if owner-db-id
+    (map touch-by-entity-id
+         (d/q '[:find [?a ...]
+                :in $ ?owner-db-id
+                :where [?a :aircraft/owner ?owner-db-id]]
+              (d/db conn)
+              owner-db-id))
+    nil))
 
 (defn transact! [data]
   @(d/transact conn data))
@@ -238,3 +250,34 @@
              [?aircraft :aircraft/airport ?a]]
        (d/db conn)
        icao)))
+
+(defn find-aircrafts-of-the-user-available [user-db-id]
+  (map touch-by-entity-id
+       (d/q '[:find [?aircraft ...]
+              :in $ ?user-db-id
+              :where
+              [?user-db-id :user/airport ?airport]
+              [?aircraft :aircraft/airport ?airport]
+              [?aircraft :aircraft/status :aircraft.status/available]
+              [?aircraft :aircraft/owner ?user-db-id]]
+            (d/db conn)
+            user-db-id)))
+
+(defn find-aircrafts-for-rent [user-db-id]
+  (map touch-by-entity-id
+       (d/q '[:find [?aircraft ...]
+              :in $ ?user-db-id
+              :where
+              [?user-db-id :user/airport ?airport]
+              [?aircraft :aircraft/airport ?airport]
+              [?aircraft :aircraft/status :aircraft.status/available]
+              [?aircraft :aircraft/available-for-rent? true]
+              (not [?aircraft :aircraft/owner ?user-db-id])]
+            (d/db conn)
+            user-db-id)))
+
+(defn find-aircrafts-available-for-user [user-db-id]
+  (flatten 
+   (conj
+    (find-aircrafts-of-the-user-available user-db-id)
+    (find-aircrafts-for-rent user-db-id))))

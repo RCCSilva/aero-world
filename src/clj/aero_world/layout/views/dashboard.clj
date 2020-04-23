@@ -8,7 +8,9 @@
     :aircraft.status/available (button {:href (str "/aircraft/" (-> aircraft :db/id) "/rent")
                                         :title "Rent It!"})
     :aircraft.status/rented (button {:href (str "/aircraft/" (-> aircraft :db/id) "/leave")
-                                     :title "Leave It!"})))
+                                     :title "Leave It!"})
+    :else (button {:href (str "/aircraft/" (-> aircraft :db/id) "/leave")
+                   :title (-> aircraft :aircraft/status)})))
 
 (defn build-aircraft-for-table [aircraft]
   (let [airport (-> aircraft :aircraft/airport :airport/icao)
@@ -16,7 +18,7 @@
         button-value (get-button-value aircraft)]
     (-> (assoc aircraft-hashmap :aircraft/airport airport)
         (assoc :aircraft/action button-value)
-        (dissoc :aircraft/payload))))
+        (dissoc :aircraft/payload :aircraft/owner :aircraft/available-for-rent?))))
 
 (defn build-payload-for-table [order]
   (let [order-hashmap (entity->hashmap order)]
@@ -62,7 +64,9 @@
     [:div.flex.flex-row.justify-between
      [:div (info-box (str "Balance: " (-> current-user :user/balance)))]
      [:div (info-box (str "Current Airport: " (-> current-user :user/airport :airport/icao)))]
-     [:div (info-box (str "Current Aircraft: " (-> current-user :user/aircraft :aircraft/type)))]]
+     [:div (info-box (format "Current Aircraft: %s (%s)" 
+                             (-> current-user :user/aircraft :aircraft/type)
+                             (-> current-user :user/aircraft :aircraft/register)))]]
     [:div.mt-2
      [:div.flex.flex-col
       [:div.flex.flex-row
