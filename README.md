@@ -5,19 +5,20 @@ should not be "seriously" used.
 
 ## Prerequisites
 
-You will need [Leiningen][] 2.0.0 or above installed.
+You will need [Clojure CLI](https://clojure.org/guides/getting_started).
 
-[leiningen]: https://github.com/technomancy/leiningen
+## Running Web Server in REPL
 
-## Running
+```bash
+clj
+```
 
-To start a web server for the application, run:
+Inside the REPL you may run these commands to start the webserver
 
-    lein ring server
-
-### REPL
-
-    (def server (-dev-main))
+```clojure
+(require '[aero-world.core :refer :all])
+(def server (-dev-main))
+```
 
 ## License
 

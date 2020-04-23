@@ -93,13 +93,17 @@
   
   (testing "Create Flight"
     (is (=
-         [{:flight/created-at (java.util.Date.)
+         [{:flight/created-at #inst "2020-01-01T03:00:00.000-00:00"
            :flight/from {:airport/icao "SBGR"}
            :flight/to {:airport/icao "SBPA"}
            :flight/aircraft 123456789
            :flight/user 987654321
            :flight/status :flight.status/scheduled}]
-         (create-flight-query {:from "SBGR" :to "SBPA" :aircraft 123456789 :user 987654321})))))
+         (create-flight-query {:from "SBGR" 
+                               :to "SBPA" 
+                               :aircraft 123456789 
+                               :user 987654321
+                               :created-at #inst "2020-01-01T03:00:00.000-00:00"})))))
 
 (deftest user-queris
   (testing "Balance Query - Add value"

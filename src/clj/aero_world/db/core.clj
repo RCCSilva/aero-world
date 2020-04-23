@@ -9,11 +9,11 @@
     (d/create-database uri)
     (let [conn (d/connect uri)
           schema (load-file "resources/datomic/schema.edn")
-          user (load-file "resources/datomic/user.edn")
-          airport (load-file "resources/datomic/airport.edn")
-          order (load-file "resources/datomic/order.edn")
-          aircraft (load-file "resources/datomic/aircraft.edn")
-          product (load-file "resources/datomic/product.edn")]
+          user (load-file "env/dev/resources/datomic/user.edn")
+          airport (load-file "env/dev/resources/datomic/airport.edn")
+          order (load-file "env/dev/resources/datomic/order.edn")
+          aircraft (load-file "env/dev/resources/datomic/aircraft.edn")
+          product (load-file "env/dev/resources/datomic/product.edn")]
       (d/transact conn schema)
       (d/transact conn airport)
       (d/transact conn order)

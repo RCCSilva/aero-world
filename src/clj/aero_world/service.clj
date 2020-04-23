@@ -74,8 +74,8 @@
 
 ;; Flight
 
-(defn create-flight-query [{:keys [from to aircraft user]}]
-  [{:flight/created-at (java.util.Date.)
+(defn create-flight-query [{:keys [from to aircraft user created-at]}]
+  [{:flight/created-at created-at
     :flight/from {:airport/icao from}
     :flight/to {:airport/icao to}
     :flight/aircraft aircraft

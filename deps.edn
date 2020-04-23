@@ -1,0 +1,28 @@
+{:paths ["src/clj" "resources"]
+ :deps
+ {org.clojure/clojure {:mvn/version "1.10.1"}
+  compojure {:mvn/version "1.6.1"}
+  ring/ring-defaults {:mvn/version "0.3.2"}
+  ring {:mvn/version "1.8.0"}
+  com.datomic/datomic-free {:mvn/version "0.9.5697"}
+  http-kit {:mvn/version "2.3.0"}
+  metosin/ring-http-response {:mvn/version "0.9.1"}
+  environ {:mvn/version "1.1.0"}
+  buddy {:mvn/version "2.0.0"}
+  org.clojure/tools.reader {:mvn/version "1.2.2"}
+  ring/ring-json {:mvn/version "0.5.0"}
+  hiccup {:mvn/version "1.0.5"}
+  clj-time {:mvn/version "0.15.2"}
+  org.clojure/tools.logging {:mvn/version "1.0.0"}}
+ 
+ :aliases
+ {:dev {:extra-paths ["env/dev"]}
+  
+  :test {:extra-paths ["test"]
+         :extra-deps {com.cognitect/test-runner
+                      {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                       :sha "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+         :main-opts ["-m" "cognitect.test-runner"]}
+  
+  :depstar {:extra-deps
+            {seancorfield/depstar {:mvn/version "1.0.94"}}}}}

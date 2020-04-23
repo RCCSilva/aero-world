@@ -92,9 +92,10 @@
         aircraft-airport (-> aircraft :aircraft/airport :airport/icao)
         flight-to (-> request :params :to)  
         query (service/create-flight-query {:from aircraft-airport
-                                           :to flight-to
-                                           :aircraft aircraft-db-id
-                                           :user current-user-db-id})]
+                                            :to flight-to
+                                            :aircraft aircraft-db-id
+                                            :user current-user-db-id
+                                            :created-at (java.util.Date.)})]
     (when (and (db/find-airport-by-icao flight-to) (not (nil? aircraft-db-id)))
       (db/transact! query))
     (response/found "/dashboard")))
