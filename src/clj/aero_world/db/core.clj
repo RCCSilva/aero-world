@@ -13,6 +13,7 @@
           airport (load-file "env/dev/resources/datomic/airport.edn")
           order (load-file "env/dev/resources/datomic/order.edn")
           aircraft (load-file "env/dev/resources/datomic/aircraft.edn")
+          aircraft-models (load-file "env/dev/resources/datomic/aircraft_models.edn")
           product (load-file "env/dev/resources/datomic/product.edn")]
       (d/transact conn schema)
       (d/transact conn airport)
@@ -20,6 +21,7 @@
       (d/transact conn aircraft)
       (d/transact conn product)
       (d/transact conn user)
+      (d/transact conn aircraft-models)
       conn)))
 
 (def conn (create-empty-in-memory-db))
@@ -77,6 +79,14 @@
             [?a :aircraft/type ?type]]
           (d/db conn)
           type))))
+
+(defn find-aircraft-by-register [register]
+  (d/q '[:find ?a .
+         :in $ ?register
+         :where
+         [?a :aircraft/register ?register]]
+       (d/db conn)
+       register))
 
 (defn find-aircrafts-by-owner [owner-db-id]
   (if owner-db-id
@@ -281,3 +291,18 @@
    (conj
     (find-aircrafts-of-the-user-available user-db-id)
     (find-aircrafts-for-rent user-db-id))))
+
+(defn find-all-aircraft-models []
+  (map 
+   touch-by-entity-id
+   (d/q '[:find [?am ...]
+          :where [?am :aircraft-model/type]]
+        (d/db conn))))
+
+(defn find-all-aircraft-model-by-type [type]
+  (touch-by-entity-id
+   (d/q '[:find ?am .
+          :in $ ?type
+          :where [?am :aircraft-model/type ?type]]
+        (d/db conn)
+        type)))

@@ -72,6 +72,23 @@
                               :value (get-aircraft-rent-value {:flight flight
                                                                :closed-at closed-at})}))
 
+(defn create-aircraft-query [{:keys [register type user]}]
+  [{:aircraft/register register
+    :aircraft/type type
+    :aircraft/owner (-> user :db/id)
+    :aircraft/available-for-rent? false
+    :aircraft/rent-price-per-hour 100.0
+    :aircraft/airport (-> user :user/airport :db/id)
+    :aircraft/status :aircraft.status/available}])
+
+(defn buy-aircraft-query [{:keys [register aircraft-model user]}]
+  (let [value (-> aircraft-model :aircraft-model/price (* -1))]
+   (concat
+    (update-user-balance-query {:user user :value value})
+    (create-aircraft-query {:register register 
+                            :type (-> aircraft-model :aircraft-model/type)
+                            :user user}))))
+
 ;; Flight
 
 (defn create-flight-query [{:keys [from to aircraft user created-at]}]

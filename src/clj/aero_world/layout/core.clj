@@ -8,7 +8,8 @@
    [aero-world.layout.views.airports :refer [airports]]
    [aero-world.layout.views.single-airport :refer [single-airport]]
    [aero-world.layout.views.logs :refer [logs]]
-   [aero-world.layout.views.user-aircrafts :refer [user-aircrafts]]))
+   [aero-world.layout.views.user-aircrafts :refer [user-aircrafts]]
+   [aero-world.layout.views.buy-aircrafts :refer [buy-aircrafts]]))
 
 (defn include-css [href]
   [:link {:type "text/css", :href href, :rel "stylesheet"}])
@@ -52,3 +53,6 @@
 
 (defn user-aircrafts-page [params]
   (base-page user-aircrafts params))
+
+(defn buy-aircrafts-page [params]
+  (base-page buy-aircrafts params))

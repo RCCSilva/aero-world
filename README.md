@@ -1,7 +1,6 @@
 # Aero World
 
-A persistent world and with economy focus for flight simulators. Currently, Aero World is in a super early release and
-should not be "seriously" used.
+A persistent world and with economy focus for flight simulators. Currently, Aero World is in a super early release and should not be "seriously" used.
 
 ## Prerequisites
 

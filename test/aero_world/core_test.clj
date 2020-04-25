@@ -149,7 +149,32 @@
                                                 :flight/created-at created-at
                                                 :flight/aircraft {:aircraft/rent-price-per-hour 100
                                                                   :aircraft/owner {:db/id 1}}}
-                                       :closed-at closed-at}))))))
+                                       :closed-at closed-at})))))
+  
+  (testing "Aircraft - Create"
+    (is [{:aircraft/register "PT-RME"
+          :aircraft/type type
+          :aircraft/owner 1
+          :aircraft/available-for-rent? false
+          :aircraft/rent-price-per-hour 100.0
+          :aircraft/airport 2
+          :aircraft/status :aircraft.status/available}]
+        (create-aircraft-query {:register "PT-RME" :type "C172" :user {:db/id 1 :user/airport {:db/id 2}}})))
+  
+  (testing "Aircraft - Create"
+    (is [[:db/add 1 :user/balance 0]
+         {:aircraft/register "PT-RME"
+          :aircraft/type type
+          :aircraft/owner 1
+          :aircraft/available-for-rent? false
+          :aircraft/rent-price-per-hour 100.0
+          :aircraft/airport 2
+          :aircraft/status :aircraft.status/available}]
+        (buy-aircraft-query {:register "PT-RME" 
+                             :aircraft-model {:aircraft-model/type "C172" :aircraft-model/price 100}  
+                             :user {:db/id 1 :user/airport {:db/id 2} :user/balance 100}}))))
+
+
 
 (deftest order-queries
   (testing "Asign Order"

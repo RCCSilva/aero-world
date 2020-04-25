@@ -88,6 +88,19 @@
   :db/cardinality :db.cardinality/many 
   :db/doc "An airport ICAO"}
 
+ ;; Aircraft Model
+ 
+ {:db/ident :aircraft-model/type
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "An aircraft type"}
+ 
+ {:db/ident :aircraft-model/price
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one
+  :db/doc "An aircraft type"}
+
  ;; Aircraft
  {:db/ident :aircraft/register
   :db/valueType :db.type/string
